@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ShopWave | Онлайн магазин</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="container nav">
+        <div class="brand">
+          <div class="brand-mark">S</div>
+          <span>ShopWave</span>
+        </div>
+
+        <nav class="menu">
+          <a href="#">Home</a>
+          <a href="#catalog">Catalog</a>
+          <a href="#offers">Deals</a>
+          <a href="#reviews">Reviews</a>
+        </nav>
+
+        <div class="nav-actions">
+          <button class="ghost-btn" id="signInButton">Sign in</button>
+          <button class="ghost-btn profile-btn hidden" id="profileButton">Profile</button>
+          <button class="ghost-btn logout-btn hidden" id="logoutButton">Log out</button>
+          <button class="cart-btn" id="cartButton">
+            Cart
+            <span class="cart-count" id="cartCount">0</span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero container">
+        <div class="hero-text">
+          <span class="tag">New collection</span>
+          <h1>Technology for everyday life</h1>
+          <p>
+            Discover premium gadgets, accessories, and devices with competitive prices,
+            fast delivery, and secure payment options.
+          </p>
+
+          <div class="hero-actions">
+            <a href="#catalog" class="primary-btn">Shop now</a>
+            <button class="secondary-btn" id="buyNowTop">Pay now</button>
+          </div>
+
+          <ul class="hero-stats">
+            <li><strong>25k+</strong><span>customers</span></li>
+            <li><strong>4.9/5</strong><span>rating</span></li>
+            <li><strong>48h</strong><span>delivery</span></li>
+          </ul>
+        </div>
+
+        <div class="hero-showcase">
+          <div class="showcase-card main">
+            <div class="showcase-badge">-30%</div>
+            <div class="device-icon">🎧</div>
+            <div>
+              <p class="mini-label">Premium sound</p>
+              <h3>SoundPro Max</h3>
+            </div>
+            <div class="price-row">
+              <span class="old-price">$ 129</span>
+              <span class="new-price">$ 89</span>
+            </div>
+          </div>
+          <div class="showcase-card floating">
+            <p>Top rated</p>
+            <strong>★ 4.9</strong>
+          </div>
+        </div>
+      </section>
+
+      <section class="promo-strip" id="offers">
+        <div class="container promo-items">
+          <div>🚚 Free shipping over $30</div>
+          <div>💳 Secure payment</div>
+          <div>🛡️ 12-month warranty</div>
+        </div>
+      </section>
+
+      <section class="catalog container" id="catalog">
+        <div class="section-header">
+          <div>
+            <p class="eyebrow">Popular products</p>
+            <h2>Best offers</h2>
+          </div>
+          <div class="filter-group">
+            <button class="filter active" data-filter="All">All</button>
+            <button class="filter" data-filter="Electronics">Electronics</button>
+            <button class="filter" data-filter="Accessories">Accessories</button>
+            <button class="filter" data-filter="Home">Home</button>
+          </div>
+        </div>
+
+        <div class="products-grid" id="productsGrid"></div>
+      </section>
+    </main>
+
+    <div class="modal-overlay" id="loginModal">
+      <div class="modal">
+        <div class="modal-header">
+          <h3>Sign in</h3>
+          <button type="button" id="closeLogin" aria-label="Close">×</button>
+        </div>
+
+        <form id="loginForm" class="login-form">
+          <label>
+            <span>Email</span>
+            <input type="email" id="loginEmail" placeholder="you@example.com" required />
+          </label>
+
+          <label id="codeFieldWrapper" class="hidden">
+            <span>Verification code</span>
+            <input type="text" id="loginCode" placeholder="Enter 6-digit code" inputmode="numeric" maxlength="6" />
+          </label>
+
+          <button type="submit" id="loginSubmitBtn" class="primary-btn full">Send code</button>
+          <p id="loginMessage" class="login-message"></p>
+        </form>
+      </div>
+    </div>
+
+    <div class="modal-overlay" id="profileModal">
+      <div class="modal profile-modal">
+        <div class="modal-header">
+          <h3>Profile</h3>
+          <button type="button" id="closeProfile" aria-label="Close">×</button>
+        </div>
+
+        <div class="profile-content">
+          <div class="profile-avatar" id="profileAvatar">U</div>
+          <div class="profile-meta">
+            <strong id="profileName">User</strong>
+            <span id="profileEmail">user@example.com</span>
+          </div>
+
+          <div class="profile-card-row">
+            <div>
+              <small>Orders</small>
+              <strong>12</strong>
+            </div>
+            <div>
+              <small>Member</small>
+              <strong>Gold</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <aside class="checkout-panel" id="checkoutPanel">
+      <div class="checkout-header">
+        <h3>Cart</h3>
+        <button id="closeCheckout" aria-label="Close">×</button>
+      </div>
+
+      <div id="cartItems" class="cart-items"></div>
+
+      <div class="checkout-summary">
+        <div>
+          <span>Total</span>
+          <strong id="totalPrice">$ 0</strong>
+        </div>
+
+        <div class="payment-methods">
+          <label><input type="radio" name="payment" value="card" checked /> Card</label>
+          <label><input type="radio" name="payment" value="cash" /> Cash on delivery</label>
+          <label><input type="radio" name="payment" value="crypto" /> Crypto</label>
+        </div>
+
+        <form id="paymentForm" class="payment-form">
+          <input type="text" id="cardholderName" placeholder="Cardholder name" required />
+          <input type="text" id="cardNumber" placeholder="Card number" inputmode="numeric" maxlength="19" required />
+          <div class="form-row">
+            <input type="text" id="cardExpiry" placeholder="MM/YY" inputmode="numeric" maxlength="5" required />
+            <input type="text" id="cardCvc" placeholder="CVC" inputmode="numeric" maxlength="4" required />
+          </div>
+          <input type="email" id="customerEmail" placeholder="Email" required />
+        </form>
+
+        <button class="primary-btn full" id="payButton">Pay now</button>
+      </div>
+    </aside>
+
+    <div class="toast" id="toast">Product added to cart</div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
