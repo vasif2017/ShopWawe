@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ShopWave | Онлайн магазин</title>
+    <title>ShopWave | Online Store</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
@@ -157,40 +157,59 @@
     </div>
 
     <aside class="checkout-panel" id="checkoutPanel">
-      <div class="checkout-header">
-        <h3>Cart</h3>
-        <button id="closeCheckout" aria-label="Close">×</button>
-      </div>
-
-      <div id="cartItems" class="cart-items"></div>
-
-      <div class="checkout-summary">
-        <div>
-          <span>Total</span>
-          <strong id="totalPrice">$ 0</strong>
-        </div>
-
-        <div class="payment-methods">
-          <label><input type="radio" name="payment" value="card" checked /> Card</label>
-          <label><input type="radio" name="payment" value="cash" /> Cash on delivery</label>
-          <label><input type="radio" name="payment" value="crypto" /> Crypto</label>
-        </div>
-
-        <form id="paymentForm" class="payment-form">
-          <input type="text" id="cardholderName" placeholder="Cardholder name" required />
-          <input type="text" id="cardNumber" placeholder="Card number" inputmode="numeric" maxlength="19" required />
-          <div class="form-row">
-            <input type="text" id="cardExpiry" placeholder="MM/YY" inputmode="numeric" maxlength="5" required />
-            <input type="text" id="cardCvc" placeholder="CVC" inputmode="numeric" maxlength="4" required />
+      <div class="checkout-layout">
+        <section class="checkout-payment">
+          <div class="checkout-header">
+            <h3>Payment</h3>
+            <button id="closeCheckout" aria-label="Close">×</button>
           </div>
-          <input type="email" id="customerEmail" placeholder="Email" required />
-        </form>
 
-        <button class="primary-btn full" id="payButton">Pay now</button>
+          <div class="checkout-summary">
+            <div>
+              <span>Total</span>
+              <strong id="totalPrice">$ 0</strong>
+            </div>
+
+            <div class="payment-methods">
+              <label><input type="radio" name="payment" value="card" checked /> Card</label>
+              <label><input type="radio" name="payment" value="cash" /> Cash on delivery</label>
+              <label><input type="radio" name="payment" value="crypto" /> Crypto</label>
+            </div>
+
+            <form id="paymentForm" class="payment-form">
+              <input type="text" id="cardholderName" placeholder="Cardholder name" required />
+              <input type="text" id="cardNumber" placeholder="Card number" inputmode="numeric" maxlength="19" required />
+              <div class="form-row">
+                <input type="text" id="cardExpiry" placeholder="MM/YY" inputmode="numeric" maxlength="5" required />
+                <input type="text" id="cardCvc" placeholder="CVC" inputmode="numeric" maxlength="4" required />
+              </div>
+              <input type="email" id="customerEmail" placeholder="Email" required />
+            </form>
+
+            <button class="primary-btn full" id="payButton">Pay now</button>
+          </div>
+        </section>
+
+        <section class="checkout-cart-column">
+          <div class="checkout-header">
+            <h3>Cart</h3>
+          </div>
+
+          <div id="cartItems" class="cart-items" aria-live="polite"></div>
+        </section>
       </div>
     </aside>
 
     <div class="toast" id="toast">Product added to cart</div>
+
+    <div class="modal-overlay" id="successModal">
+      <div class="modal success-modal">
+        <div class="success-icon">✓</div>
+        <h3>Payment successful</h3>
+        <p>Your order is being prepared for shipment.</p>
+        <button class="primary-btn full" id="successContinueBtn">Continue shopping</button>
+      </div>
+    </div>
 
     <script src="app.js"></script>
   </body>

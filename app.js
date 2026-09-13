@@ -73,8 +73,23 @@ const products = [
   },
 ];
 
-const STRIPE_PAYMENT_LINK = 'https://buy.stripe.com/test_4gw6qy2Y1g7G8a4eYY';
-const cart = [];
+const STRIPE_PAYMENT_LINK = '';
+const CART_STORAGE_KEY = 'shopwave-cart';
+
+function loadCart() {
+  try {
+    const savedCart = JSON.parse(localStorage.getItem(CART_STORAGE_KEY) || '[]');
+    return Array.isArray(savedCart) ? savedCart : [];
+  } catch (error) {
+    return [];
+  }
+}
+
+function saveCart() {
+  localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart));
+}
+
+const cart = loadCart();
 let currentFilter = 'All';
 
 const productsGrid = document.getElementById('productsGrid');
@@ -83,6 +98,8 @@ const totalPrice = document.getElementById('totalPrice');
 const cartCount = document.getElementById('cartCount');
 const checkoutPanel = document.getElementById('checkoutPanel');
 const toast = document.getElementById('toast');
+const successModal = document.getElementById('successModal');
+const successContinueBtn = document.getElementById('successContinueBtn');
 const paymentForm = document.getElementById('paymentForm');
 const signInButton = document.getElementById('signInButton');
 const profileButton = document.getElementById('profileButton');
@@ -222,6 +239,8 @@ function addToCart(productId) {
 }
 
 function updateCart() {
+  saveCart();
+
   if (cart.length === 0) {
     cartItems.innerHTML = '<p class="empty-cart">Cart is empty</p>';
     totalPrice.textContent = formatPrice(0);
@@ -233,11 +252,18 @@ function updateCart() {
     .map(
       (item) => `
         <div class="cart-item">
-          <div>
+          <div class="cart-item-info">
             <strong>${item.name}</strong>
-            <small>${item.quantity} pcs.</small>
+            <small>${formatPrice(item.price)} each</small>
           </div>
-          <span>${formatPrice(item.price * item.quantity)}</span>
+
+          <div class="cart-item-controls">
+            <button class="qty-btn" data-action="decrease" data-id="${item.id}">-</button>
+            <span class="qty-value">${item.quantity}</span>
+            <button class="qty-btn" data-action="increase" data-id="${item.id}">+</button>
+          </div>
+
+          <span class="cart-item-total">${formatPrice(item.price * item.quantity)}</span>
         </div>
       `
     )
@@ -253,6 +279,14 @@ function showToast(message) {
   toast.classList.add('visible');
   clearTimeout(showToast.timeoutId);
   showToast.timeoutId = setTimeout(() => toast.classList.remove('visible'), 1800);
+}
+
+function openSuccessModal() {
+  successModal.classList.add('open');
+}
+
+function closeSuccessModal() {
+  successModal.classList.remove('open');
 }
 
 function openCheckout() {
@@ -275,30 +309,37 @@ function handlePayment() {
     const isValid = validatePaymentForm();
     if (!isValid) return;
 
-    if (STRIPE_PAYMENT_LINK && STRIPE_PAYMENT_LINK.includes('stripe.com')) {
+    const isRealStripeLink = typeof STRIPE_PAYMENT_LINK === 'string'
+      && STRIPE_PAYMENT_LINK.startsWith('https://')
+      && STRIPE_PAYMENT_LINK.includes('stripe.com');
+
+    if (isRealStripeLink) {
       window.location.href = STRIPE_PAYMENT_LINK;
       return;
     }
 
-    showToast('Payment form ready');
     cart.length = 0;
     updateCart();
     closeCheckout();
+    closeSuccessModal();
+    openSuccessModal();
     return;
   }
 
   if (selectedMethod === 'cash') {
-    showToast('Cash on delivery order created');
     cart.length = 0;
     updateCart();
     closeCheckout();
+    closeSuccessModal();
+    openSuccessModal();
     return;
   }
 
-  showToast('Crypto payment is processing');
   cart.length = 0;
   updateCart();
   closeCheckout();
+  closeSuccessModal();
+  openSuccessModal();
 }
 
 productsGrid.addEventListener('click', (event) => {
@@ -315,6 +356,31 @@ productsGrid.addEventListener('click', (event) => {
   }
 });
 
+cartItems.addEventListener('click', (event) => {
+  const btn = event.target.closest('.qty-btn');
+  if (!btn) return;
+
+  const productId = Number(btn.dataset.id);
+  const action = btn.dataset.action;
+  const cartItem = cart.find((item) => item.id === productId);
+
+  if (!cartItem) return;
+
+  if (action === 'increase') {
+    cartItem.quantity += 1;
+  }
+
+  if (action === 'decrease') {
+    cartItem.quantity -= 1;
+    if (cartItem.quantity <= 0) {
+      const index = cart.findIndex((item) => item.id === productId);
+      cart.splice(index, 1);
+    }
+  }
+
+  updateCart();
+});
+
 document.querySelectorAll('.filter').forEach((button) => {
   button.addEventListener('click', () => {
     currentFilter = button.dataset.filter;
@@ -329,6 +395,10 @@ document.querySelectorAll('.filter').forEach((button) => {
 
 document.getElementById('cartButton').addEventListener('click', openCheckout);
 document.getElementById('closeCheckout').addEventListener('click', closeCheckout);
+successContinueBtn.addEventListener('click', () => {
+  closeSuccessModal();
+  showToast('Continue shopping');
+});
 document.getElementById('payButton').addEventListener('click', handlePayment);
 document.getElementById('buyNowTop').addEventListener('click', () => {
   if (cart.length > 0) {
