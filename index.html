@@ -25,10 +25,10 @@
         </nav>
 
         <div class="nav-actions">
-          <button class="ghost-btn" id="signInButton">Sign in</button>
-          <button class="ghost-btn profile-btn hidden" id="profileButton">Profile</button>
-          <button class="ghost-btn logout-btn hidden" id="logoutButton">Log out</button>
-          <button class="cart-btn" id="cartButton">
+          <button type="button" class="ghost-btn" id="signInButton">Sign in</button>
+          <button type="button" class="ghost-btn profile-btn hidden" id="profileButton">Profile</button>
+          <button type="button" class="ghost-btn logout-btn hidden" id="logoutButton">Log out</button>
+          <button type="button" class="cart-btn" id="cartButton">
             Cart
             <span class="cart-count" id="cartCount">0</span>
           </button>
@@ -93,6 +93,30 @@
             <p class="eyebrow">Popular products</p>
             <h2>Best offers</h2>
           </div>
+          <div class="filter-group" aria-label="Product filters">
+            <label class="filter-field search-field">
+              <span>Search</span>
+              <input type="search" id="productSearch" placeholder="Product name" />
+            </label>
+            <label class="filter-field">
+              <span>Category</span>
+              <select id="categoryFilter">
+                <option value="All">All categories</option>
+              </select>
+            </label>
+            <label class="filter-field">
+              <span>Up to <strong id="priceValue">$1,199</strong></span>
+              <input type="range" id="priceFilter" min="0" max="1199" value="1199" step="10" />
+            </label>
+            <label class="filter-field">
+              <span>Sort by</span>
+              <select id="sortFilter">
+                <option value="featured">Featured</option>
+                <option value="price-asc">Price: low to high</option>
+                <option value="price-desc">Price: high to low</option>
+                <option value="rating">Rating</option>
+              </select>
+            </label>
           </div>
         </div>
 
@@ -158,7 +182,7 @@
         <section class="checkout-payment">
           <div class="checkout-header">
             <h3>Payment</h3>
-            <button id="closeCheckout" aria-label="Close">×</button>
+            <button type="button" id="closeCheckout" aria-label="Close">×</button>
           </div>
 
           <div class="checkout-summary">

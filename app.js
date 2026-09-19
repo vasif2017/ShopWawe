@@ -178,6 +178,114 @@ const products = [
     icon: '🎟️',
     accent: '#f59e0b',
     badge: 'New',
+  },
+  {
+    id:16,
+    name: 'Brawl Pass Plus',
+    category: 'Gaming',
+    oldPrice: 29,
+    price: 19,
+    rating: 4.6,
+    reviews: 80,
+    icon: '🎟️',
+    accent: '#f59e0b',
+    badge: 'New',
+  },
+  {
+    id:17,
+    name: 'Pro Pass',
+    category: 'Gaming',
+    oldPrice: 39,
+    price: 29,
+    rating: 4.7,
+    reviews: 90,
+    icon: '🎟️',
+    accent: '#f59e0b',
+    badge: 'New',
+  },
+  {
+    id:18,
+    name: 'Pro Pass Plus',
+    category: 'Gaming',
+    oldPrice: 49,
+    price: 39,
+    rating: 4.8,
+    reviews: 100,
+    icon: '🎟️',
+    accent: '#f59e0b',
+    badge: 'New',
+  },
+  {
+    id:19,
+    name: '30 Gems',
+    category: 'Gaming',
+    oldPrice: 3.49,
+    price: 1.19,
+    rating: 4.8,
+    reviews: 100,
+    icon: '🎟️',
+    accent: '#f59e0b',
+    badge: 'New',
+  },
+  {
+    id:20,
+    name: '60 Gems',
+    category: 'Gaming',
+    oldPrice: 6,
+    price: 4.99,
+    rating: 4.8,
+    reviews: 100,
+    icon: '🎟️',
+    accent: '#f59e0b',
+    badge: 'New',
+  },
+  {
+    id:21,
+    name: '120 Gems',
+    category: 'Gaming',
+    oldPrice: 13,
+    price: 7.99,
+    rating: 4.8,
+    reviews: 100,
+    icon: '🎟️',
+    accent: '#f59e0b',
+    badge: 'New',
+  },
+  {
+    id:22,
+    name: '360 Gems',
+    category: 'Gaming',
+    oldPrice: 24,
+    price: 17.99,
+    rating: 4.8,
+    reviews: 100,
+    icon: '🎟️',
+    accent: '#f59e0b',
+    badge: 'New',
+  },
+  {
+    id:23,
+    name: '950 Gems',
+    category: 'Gaming',
+    oldPrice: 59,
+    price: 49.99,
+    rating: 4.8,
+    reviews: 100,
+    icon: '🎟️',
+    accent: '#f59e0b',
+    badge: 'New',
+  },
+  {
+    id:24,
+    name: '2000 Gems',
+    category: 'Gaming',
+    oldPrice: 149,
+    price: 139.99,
+    rating: 4.8,
+    reviews: 100,
+    icon: '🎟️',
+    accent: '#f59e0b',
+    badge: 'New',
   }
 ];
 
@@ -187,7 +295,16 @@ const CART_STORAGE_KEY = 'shopwave-cart';
 function loadCart() {
   try {
     const savedCart = JSON.parse(localStorage.getItem(CART_STORAGE_KEY) || '[]');
-    return Array.isArray(savedCart) ? savedCart : [];
+    if (!Array.isArray(savedCart)) return [];
+
+    return savedCart
+      .filter((item) => item && Number.isInteger(Number(item.id)) && Number(item.price) >= 0)
+      .map((item) => ({
+        ...item,
+        id: Number(item.id),
+        price: Number(item.price),
+        quantity: Math.max(1, Math.floor(Number(item.quantity) || 1)),
+      }));
   } catch (error) {
     return [];
   }
@@ -198,7 +315,6 @@ function saveCart() {
 }
 
 const cart = loadCart();
-
 
 const productsGrid = document.getElementById('productsGrid');
 const cartItems = document.getElementById('cartItems');
@@ -295,7 +411,20 @@ function validatePaymentForm() {
 }
 
 function renderProducts() {
-  const visibleProducts = products;
+  const search = productSearch.value.trim().toLowerCase();
+  const category = categoryFilter.value;
+  const maxPrice = Number(priceFilter.value);
+  const sort = sortFilter.value;
+  const visibleProducts = products
+    .filter((product) => category === 'All' || product.category === category)
+    .filter((product) => product.name.toLowerCase().includes(search))
+    .filter((product) => product.price <= maxPrice)
+    .sort((firstProduct, secondProduct) => {
+      if (sort === 'price-asc') return firstProduct.price - secondProduct.price;
+      if (sort === 'price-desc') return secondProduct.price - firstProduct.price;
+      if (sort === 'rating') return secondProduct.rating - firstProduct.rating;
+      return firstProduct.id - secondProduct.id;
+    });
 
   resultsCount.textContent = `${visibleProducts.length} product${visibleProducts.length === 1 ? '' : 's'} found`;
 
@@ -359,6 +488,13 @@ function addToCart(productId) {
 }
 
 function updateCart() {
+  for (let index = cart.length - 1; index >= 0; index -= 1) {
+    const item = cart[index];
+    if (!item || !Number.isFinite(item.price) || !Number.isFinite(item.quantity) || item.quantity < 1) {
+      cart.splice(index, 1);
+    }
+  }
+
   saveCart();
 
   if (cart.length === 0) {
@@ -410,10 +546,12 @@ function closeSuccessModal() {
 }
 
 function openCheckout() {
+  if (!checkoutPanel) return;
   checkoutPanel.classList.add('open');
 }
 
 function closeCheckout() {
+  if (!checkoutPanel) return;
   checkoutPanel.classList.remove('open');
 }
 
@@ -506,28 +644,37 @@ cartItems.addEventListener('click', (event) => {
   updateCart();
 });
 
+const categories = [...new Set(products.map((product) => product.category))].sort();
+categories.forEach((category) => {
+  categoryFilter.insertAdjacentHTML('beforeend', `<option value="${category}">${category}</option>`);
+});
 
+productSearch.addEventListener('input', (event) => {
   renderProducts();
+});
 
 
 categoryFilter.addEventListener('change', (event) => {
-  filterState.category = event.target.value;
   renderProducts();
 });
 
 priceFilter.addEventListener('input', (event) => {
-  filterState.maxPrice = Number(event.target.value);
-  priceValue.textContent = formatPrice(filterState.maxPrice);
+  priceValue.textContent = formatPrice(Number(event.target.value));
   renderProducts();
 });
 
 sortFilter.addEventListener('change', (event) => {
-  filterState.sort = event.target.value;
   renderProducts();
 });
 
-document.getElementById('cartButton').addEventListener('click', openCheckout);
+document.getElementById('cartButton').addEventListener('click', (event) => {
+  event.preventDefault();
+  openCheckout();
+});
 document.getElementById('closeCheckout').addEventListener('click', closeCheckout);
+checkoutPanel.addEventListener('click', (event) => {
+  if (event.target === checkoutPanel) closeCheckout();
+});
 successContinueBtn.addEventListener('click', () => {
   closeSuccessModal();
   showToast('Continue shopping');
@@ -572,7 +719,7 @@ function closeLoginModal() {
 }
 
 function openProfileModal() {
-  const savedUser = JSON.parse(localStorage.getItem('shopwave-user') || 'null');
+  const savedUser = readUserFromStorage();
   if (!savedUser || !savedUser.email) {
     showToast('Please sign in first');
     return;
@@ -613,7 +760,10 @@ function updateAuthButton() {
   }
 }
 
-signInButton.addEventListener('click', openLoginModal);
+signInButton.addEventListener('click', (event) => {
+  event.preventDefault();
+  openLoginModal();
+});
 profileButton.addEventListener('click', openProfileModal);
 closeProfileButton.addEventListener('click', closeProfileModal);
 profileModal.addEventListener('click', (event) => {
