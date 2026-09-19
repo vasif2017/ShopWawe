@@ -198,12 +198,7 @@ function saveCart() {
 }
 
 const cart = loadCart();
-const filterState = {
-  category: 'All',
-  search: '',
-  maxPrice: 1199,
-  sort: 'featured',
-};
+
 
 const productsGrid = document.getElementById('productsGrid');
 const cartItems = document.getElementById('cartItems');
