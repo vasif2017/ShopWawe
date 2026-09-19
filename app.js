@@ -166,6 +166,18 @@ const products = [
     icon: '🧴',
     accent: '#14b8a6',
     badge: 'New',
+  },
+  {
+    id:15,
+    name: 'Brawl Pass',
+    category: 'Gaming',
+    oldPrice: 19,
+    price: 14,
+    rating: 4.5,
+    reviews: 60,
+    icon: '🎟️',
+    accent: '#f59e0b',
+    badge: 'New',
   }
 ];
 
@@ -186,7 +198,12 @@ function saveCart() {
 }
 
 const cart = loadCart();
-let currentFilter = 'All';
+const filterState = {
+  category: 'All',
+  search: '',
+  maxPrice: 1199,
+  sort: 'featured',
+};
 
 const productsGrid = document.getElementById('productsGrid');
 const cartItems = document.getElementById('cartItems');
@@ -212,6 +229,12 @@ const codeFieldWrapper = document.getElementById('codeFieldWrapper');
 const profileName = document.getElementById('profileName');
 const profileEmail = document.getElementById('profileEmail');
 const profileAvatar = document.getElementById('profileAvatar');
+const productSearch = document.getElementById('productSearch');
+const categoryFilter = document.getElementById('categoryFilter');
+const priceFilter = document.getElementById('priceFilter');
+const priceValue = document.getElementById('priceValue');
+const sortFilter = document.getElementById('sortFilter');
+const resultsCount = document.getElementById('resultsCount');
 
 function formatPrice(value) {
   return new Intl.NumberFormat('en-US', {
@@ -275,10 +298,25 @@ function validatePaymentForm() {
   return true;
 }
 
-function renderProducts(filter = currentFilter) {
-  const visibleProducts = filter === 'All'
-    ? products
-    : products.filter((product) => product.category === filter);
+function renderProducts() {
+  const normalizedSearch = filterState.search.toLowerCase();
+  const visibleProducts = products
+    .filter((product) => filterState.category === 'All' || product.category === filterState.category)
+    .filter((product) => product.name.toLowerCase().includes(normalizedSearch))
+    .filter((product) => product.price <= filterState.maxPrice)
+    .sort((firstProduct, secondProduct) => {
+      if (filterState.sort === 'price-asc') return firstProduct.price - secondProduct.price;
+      if (filterState.sort === 'price-desc') return secondProduct.price - firstProduct.price;
+      if (filterState.sort === 'rating') return secondProduct.rating - firstProduct.rating;
+      return firstProduct.id - secondProduct.id;
+    });
+
+  resultsCount.textContent = `${visibleProducts.length} product${visibleProducts.length === 1 ? '' : 's'} found`;
+
+  if (visibleProducts.length === 0) {
+    productsGrid.innerHTML = '<p class="empty-results">No products match these filters.</p>';
+    return;
+  }
 
   productsGrid.innerHTML = visibleProducts
     .map(
@@ -477,16 +515,30 @@ cartItems.addEventListener('click', (event) => {
   updateCart();
 });
 
-document.querySelectorAll('.filter').forEach((button) => {
-  button.addEventListener('click', () => {
-    currentFilter = button.dataset.filter;
+const categories = [...new Set(products.map((product) => product.category))].sort();
+categories.forEach((category) => {
+  categoryFilter.insertAdjacentHTML('beforeend', `<option value="${category}">${category}</option>`);
+});
 
-    document.querySelectorAll('.filter').forEach((item) => {
-      item.classList.toggle('active', item === button);
-    });
+productSearch.addEventListener('input', (event) => {
+  filterState.search = event.target.value.trim();
+  renderProducts();
+});
 
-    renderProducts(currentFilter);
-  });
+categoryFilter.addEventListener('change', (event) => {
+  filterState.category = event.target.value;
+  renderProducts();
+});
+
+priceFilter.addEventListener('input', (event) => {
+  filterState.maxPrice = Number(event.target.value);
+  priceValue.textContent = formatPrice(filterState.maxPrice);
+  renderProducts();
+});
+
+sortFilter.addEventListener('change', (event) => {
+  filterState.sort = event.target.value;
+  renderProducts();
 });
 
 document.getElementById('cartButton').addEventListener('click', openCheckout);

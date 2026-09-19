@@ -92,14 +92,37 @@
             <p class="eyebrow">Popular products</p>
             <h2>Best offers</h2>
           </div>
-          <div class="filter-group">
-            <button class="filter active" data-filter="All">All</button>
-            <button class="filter" data-filter="Electronics">Electronics</button>
-            <button class="filter" data-filter="Accessories">Accessories</button>
-            <button class="filter" data-filter="Home">Home</button>
+          <div class="filter-group" aria-label="Product filters">
+            <label class="filter-field search-field">
+              <span>Search</span>
+              <input type="search" id="productSearch" placeholder="Product name" />
+            </label>
+
+            <label class="filter-field">
+              <span>Category</span>
+              <select id="categoryFilter">
+                <option value="All">All categories</option>
+              </select>
+            </label>
+
+            <label class="filter-field">
+              <span>Up to <strong id="priceValue">$1,199</strong></span>
+              <input type="range" id="priceFilter" min="0" max="1199" value="1199" step="10" />
+            </label>
+
+            <label class="filter-field">
+              <span>Sort by</span>
+              <select id="sortFilter">
+                <option value="featured">Featured</option>
+                <option value="price-asc">Price: low to high</option>
+                <option value="price-desc">Price: high to low</option>
+                <option value="rating">Rating</option>
+              </select>
+            </label>
           </div>
         </div>
 
+        <p class="results-count" id="resultsCount" aria-live="polite"></p>
         <div class="products-grid" id="productsGrid"></div>
       </section>
     </main>
