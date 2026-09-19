@@ -224,6 +224,7 @@ const codeFieldWrapper = document.getElementById('codeFieldWrapper');
 const profileName = document.getElementById('profileName');
 const profileEmail = document.getElementById('profileEmail');
 const profileAvatar = document.getElementById('profileAvatar');
+const buyBrawlPassButton = document.getElementById('buyBrawlPass');
 const productSearch = document.getElementById('productSearch');
 const categoryFilter = document.getElementById('categoryFilter');
 const priceFilter = document.getElementById('priceFilter');
@@ -483,6 +484,11 @@ productsGrid.addEventListener('click', (event) => {
     addToCart(Number(buyBtn.dataset.id));
     openCheckout();
   }
+});
+
+buyBrawlPassButton.addEventListener('click', () => {
+  addToCart(Number(buyBrawlPassButton.dataset.id));
+  openCheckout();
 });
 
 cartItems.addEventListener('click', (event) => {
