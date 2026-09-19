@@ -198,12 +198,6 @@ function saveCart() {
 }
 
 const cart = loadCart();
-const filterState = {
-  category: 'All',
-  search: '',
-  maxPrice: 1199,
-  sort: 'featured',
-};
 
 
 const productsGrid = document.getElementById('productsGrid');
@@ -301,17 +295,7 @@ function validatePaymentForm() {
 }
 
 function renderProducts() {
-  const normalizedSearch = filterState.search.toLowerCase();
-  const visibleProducts = products
-    .filter((product) => filterState.category === 'All' || product.category === filterState.category)
-    .filter((product) => product.name.toLowerCase().includes(normalizedSearch))
-    .filter((product) => product.price <= filterState.maxPrice)
-    .sort((firstProduct, secondProduct) => {
-      if (filterState.sort === 'price-asc') return firstProduct.price - secondProduct.price;
-      if (filterState.sort === 'price-desc') return secondProduct.price - firstProduct.price;
-      if (filterState.sort === 'rating') return secondProduct.rating - firstProduct.rating;
-      return firstProduct.id - secondProduct.id;
-    });
+  const visibleProducts = products;
 
   resultsCount.textContent = `${visibleProducts.length} product${visibleProducts.length === 1 ? '' : 's'} found`;
 
@@ -522,15 +506,9 @@ cartItems.addEventListener('click', (event) => {
   updateCart();
 });
 
-const categories = [...new Set(products.map((product) => product.category))].sort();
-categories.forEach((category) => {
-  categoryFilter.insertAdjacentHTML('beforeend', `<option value="${category}">${category}</option>`);
-});
 
-productSearch.addEventListener('input', (event) => {
-  filterState.search = event.target.value.trim();
   renderProducts();
-});
+
 
 categoryFilter.addEventListener('change', (event) => {
   filterState.category = event.target.value;
