@@ -480,6 +480,11 @@ button {
   font-size: 1.2rem;
 }
 
+.favorite-btn.active {
+  color: #ef4444;
+  background: rgba(239, 68, 68, 0.12);
+}
+
 .product-visual {
   display: grid;
   place-items: center;

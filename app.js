@@ -1,5 +1,17 @@
 const products = [
   {
+    id: 1,
+    name: 'AirPods Pro',
+    category: 'Wearables',
+    oldPrice: 249,
+    price: 199,
+    rating: 4.9,
+    reviews: 180,
+    icon: '🎧',
+    accent: '#f59e0b',
+    badge: 'New',
+  },
+  {
     id: 2,
     name: 'Smart Watch X9',
     category: 'Wearables',
@@ -142,6 +154,30 @@ const products = [
     icon: '🧴',
     accent: '#14b8a6',
     badge: 'New',
+  },
+  {
+    id:25,
+    name: 'Gaming PC',
+    category: 'Electronics',
+    oldPrice: 1299.99,
+    price: 999.99,
+    rating: 5.2,
+    reviews: 239,
+    icon: '💻',
+    accent: '#39e75f',
+    badge: 'Sale'
+  },
+  {
+    id:26,
+    name: 'Iphone 18 Pro Max',
+    category: 'Electronics',
+    oldPrice: 20999.49,
+    price: 16999.999,
+    rating: 4.9,
+    reviews: 200,
+    icon: '📱',
+    accent: '#910b0b',
+    badge: 'Sale',
   },
   {
     id:15,
@@ -389,12 +425,10 @@ function validatePaymentForm() {
 function renderProducts() {
   const search = productSearch.value.trim().toLowerCase();
   const category = categoryFilter.value;
-  const maxPrice = Number(priceFilter.value);
   const sort = sortFilter.value;
   const visibleProducts = products
     .filter((product) => category === 'All' || product.category === category)
     .filter((product) => product.name.toLowerCase().includes(search))
-    .filter((product) => product.price <= maxPrice)
     .sort((firstProduct, secondProduct) => {
       if (sort === 'price-asc') return firstProduct.price - secondProduct.price;
       if (sort === 'price-desc') return secondProduct.price - firstProduct.price;
@@ -631,11 +665,6 @@ productSearch.addEventListener('input', (event) => {
 
 
 categoryFilter.addEventListener('change', (event) => {
-  renderProducts();
-});
-
-priceFilter.addEventListener('input', (event) => {
-  priceValue.textContent = formatPrice(Number(event.target.value));
   renderProducts();
 });
 
